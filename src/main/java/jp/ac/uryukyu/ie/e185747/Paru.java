@@ -3,7 +3,6 @@ package jp.ac.uryukyu.ie.e185747;
 import java.awt.Graphics;
 import javax.swing.ImageIcon;
 import java.awt.Image;
-import java.io.File;
 
 public class Paru {
     //位置
@@ -11,16 +10,16 @@ public class Paru {
     private int y;
 
     //spriteシートの番号保存系
-    private int count; //staticなのは，MainPanelで
+    private int count;
     private int maxCount;
 
-    //それぞれのファイル名
+    //読み込みファイル名
     private String[] filenames = {"paru_normal.png","paru_attack.png","efect.png"};
 
-    //モーションの枚数（何コマで書かれているか）
+    //モーションの枚数（何コマで書かれているか　0から始まる点に注意）
     private int[] NO = {1,3,0};
 
-    //キャラの大きさ
+    //キャラの大きさ　本来230＊120のドット絵だったが，小さかったので＊2をする
     private final int width = 230*2;
     private final int height = 120*2;
 
@@ -28,8 +27,8 @@ public class Paru {
     private Image[] images;
 
     //状態の引数
-    public static final int NORMAL = 0;
-    public static final int ATTACK = 1;
+    public final int NORMAL = 0;
+    public final int ATTACK = 1;
 
     //現在の状態は？
     private int dir;
@@ -58,10 +57,10 @@ public class Paru {
         this.count = 0;
         this.maxCount = NO[0];
 
-        //wav.load(soundFilenames[0],"wav/" + soundFilenames[0]);
-        //wav.load(soundFilenames[1],"wav/" + soundFilenames[1]);
+        //ロード系
+        wav.load(soundFilenames[0],"wav/" + soundFilenames[0]);
+        wav.load(soundFilenames[1],"wav/" + soundFilenames[1]);
         loadImage(filenames);
-
 
         //アニメーション用スレッド開始
         thread = new AnimationThread();
@@ -73,9 +72,9 @@ public class Paru {
     */
     public void drow(Graphics g){
 
-        if (dir != beforeDir){
+        if (dir != beforeDir){ //モーション変化が起こったら，countを0に戻して1コマ目のモーションから
             count = 0;
-            maxCount = NO[dir];
+            maxCount = NO[dir]; //最大コマ数の変更
         }
 
         beforeDir = dir;
@@ -101,33 +100,35 @@ public class Paru {
 
         for (int i= 0; i < filenames.length;i++) {
 
-            //ImageIcon icon = new ImageIcon(new File(filenames[i]).getAbsolutePath());
             ImageIcon icon = new ImageIcon(getClass().getResource("image/" + filenames[i]));
             images[i] = icon.getImage();
         }
     }
 
     /*
-    状態が変わった時のsleep時間を正しく行わせるため
+    状態のセッター
      */
-    public void stop(){
-            //割り込み判定で強制的にThread.sleepを終了させる
-            thread.interrupt();
-            setCount(0);
-    }
-
     public void setDir(int dir){
         this.dir = dir;
     }
 
+    /*
+    モーションカウントのゲッター
+    */
     public int getCount(){
         return count;
     }
 
+    /*
+    カウントのセッター
+     */
     public void setCount(int count){
         this.count = count;
     }
 
+    /*
+    Threadの無限ループでモーションを作成
+     */
     private class AnimationThread extends Thread{
 
         @Override
@@ -155,5 +156,15 @@ public class Paru {
                 }
             }
         }
+    }
+
+    /*
+    状態が変わった時のsleep時間を正しく行わせるため，AnimationThreadへの割り込み判定
+    ※もしかして，全てのスレッドに対して割り込みになっていたり？理解不足有り
+     */
+    public void stop(){
+        //割り込み判定で強制的にThread.sleepを終了させる
+        thread.interrupt();
+        setCount(0);
     }
 }

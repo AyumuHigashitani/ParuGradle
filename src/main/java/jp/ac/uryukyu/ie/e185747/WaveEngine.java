@@ -1,8 +1,6 @@
 package jp.ac.uryukyu.ie.e185747;
 
 import java.io.IOException;
-import java.io.File;
-import java.net.URL;
 import java.util.HashMap;
 
 import javax.sound.sampled.AudioFormat;
@@ -58,8 +56,6 @@ public class WaveEngine implements LineListener {
 
         try {
             // オーディオストリームを開く
-            //System.out.println(new File(filename).getAbsolutePath());
-            //AudioInputStream stream = AudioSystem.getAudioInputStream(new URL(new File(filename).getAbsolutePath()));
 
             AudioInputStream stream = AudioSystem.getAudioInputStream(getClass().getResource(filename));
 

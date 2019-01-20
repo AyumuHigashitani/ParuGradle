@@ -20,6 +20,9 @@ public class ScorePanel extends Panel {
     //読み込みファイル名
     private String[]  filenames = {"0.png","1.png","2.png","3.png","4.png","5.png","6.png","7.png","8.png","9.png","paru_end.png"};
 
+    /*
+    コンストラクタ
+     */
     public ScorePanel(){
 
         //パネルの大きさなどを設定
@@ -29,7 +32,7 @@ public class ScorePanel extends Panel {
 
         //初期値設定
         this.F = 0.0f;
-        intScore = new int[5];
+        intScore = new int[5]; //5桁分だけ箱を用意
 
         //イメージのロード
         loadImage(filenames);
@@ -38,6 +41,9 @@ public class ScorePanel extends Panel {
         thread = new Thread(this);
     }
 
+    /*
+    動く部分
+     */
     public void run() {
         while (true) {
 
@@ -56,17 +62,20 @@ public class ScorePanel extends Panel {
         }
     }
 
+    /*
+    描画メソッド
+     */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
         // アルファ値
         AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, F);
-
         g2.setComposite(composite);
 
         g.drawImage(images[10],0,0,null);
 
+        //scoreの数字を画像で表示させる　好きなfontが見つからなかったので。。。
         int num = 0;
         for (int i : intScore){
             num++;
@@ -74,7 +83,11 @@ public class ScorePanel extends Panel {
         }
     }
 
-    public void scoreChangeInttoString(int score){
+    /*
+    scoreをint型から，Str型[]に変え，さらにint[]型にする
+    scoreの表示fontに気にいるのがなかったので，番号にあった数字の画像を表示させるための下準備
+     */
+    public void scoreChangeIntToString(int score){
 
         int num = 0;
 
@@ -85,20 +98,24 @@ public class ScorePanel extends Panel {
         }
     }
 
+    /*
+    ScorePanelを見えてない状態にする
+     */
     public void InVisible(){
         setVisible(false);
         isFinish = false;
     }
 
+    /*
+    ScorePanelを見えるようにする
+     */
     public void Visible(){
 
         if (!isFinish){ //１回だけここを実行させるため
             thread.start();
             setVisible(true);
+            scoreChangeIntToString(MainPanel.score);
             isFinish = true;
-            scoreChangeInttoString(MainPanel.score);
         }
-
     }
-
 }

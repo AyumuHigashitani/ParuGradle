@@ -127,8 +127,17 @@ public class Paru {
     }
 
     /*
-    Threadの無限ループでモーションを作成
+    イメージのゲッター
+    ユニットテストで使用
      */
+
+    public Image[] getImages() {
+        return images;
+    }
+
+    /*
+        Threadの無限ループでモーションを作成
+         */
     private class AnimationThread extends Thread{
 
         @Override
